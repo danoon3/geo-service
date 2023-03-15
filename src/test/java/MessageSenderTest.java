@@ -25,18 +25,42 @@ public class MessageSenderTest {
 
         LocalizationService localizationServiceMock = Mockito.mock(LocalizationServiceImpl.class);
         Mockito.when(localizationServiceMock.locale(Country.RUSSIA))
-                .thenReturn("Добро пожаловать");
+                .thenReturn("Привет");
 
         MessageSenderImpl messageSender = new MessageSenderImpl(geoServiceMock, localizationServiceMock);
 
         Map<String, String> headers = new HashMap<String, String>();
 
-        headers.put(MessageSenderImpl.IP_ADDRESS_HEADER, "172.0.0.0");
+        headers.put(MessageSenderImpl.IP_ADDRESS_HEADER, ip);
 
-        String expected = "Добро пожаловать";
+        String expected = "Привет";
         String result = messageSender.send(headers);
 
         Assertions.assertEquals(expected, result);
 
+    }
+
+    @Test
+    void MessageSenderEngTest() {
+        String ip = "96.135.12.58";
+
+        GeoService geoServiceMock = Mockito.mock(GeoServiceImpl.class);
+        Mockito.when(geoServiceMock.byIp(ip))
+                .thenReturn(new Location("Boston", Country.USA, null, 3));
+
+        LocalizationService localizationServiceMock = Mockito.mock(LocalizationServiceImpl.class);
+        Mockito.when(localizationServiceMock.locale(Country.USA))
+                .thenReturn("Hi");
+
+        MessageSenderImpl messageSender = new MessageSenderImpl(geoServiceMock, localizationServiceMock);
+
+        Map<String, String> header = new HashMap<String, String>();
+
+        header.put(MessageSenderImpl.IP_ADDRESS_HEADER, ip);
+
+        String expected = "Hi";
+        String result = messageSender.send(header);
+
+        Assertions.assertEquals(expected, result);
     }
 }
